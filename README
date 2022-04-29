@@ -1,0 +1,53 @@
+--------------------------------------------------------------------------------
+|                                                                              |
+|                               Cody Johnson                                   |
+|                             CS415 HW4 README                                 |
+|                                                                              |
+--------------------------------------------------------------------------------
+
+3.) Usage for tempReadings.c is as follows:
+
+      ./tempReadings [N] >> [temps_file]
+
+    This program generates N numbers to a file temps_file when run
+    with this command.
+
+
+
+4.) Usage for mpiHistogram.c is as follows:
+
+      mpiexec -n [num_procs] ./hist [data_count] < [data_file] >> [histogram_file]
+
+    This program takes num_procs processes and generates a histogram of 
+    data_count numbers from the file data_file and generates a table of
+    information in histogram_file about the distribution of the numbers
+    in the different bins.
+
+
+    Issues with Program:
+
+      This program works with no errors for any input file with a data_count
+      value < 122.  This will output a histogram graph with no additional 
+      errors or output.
+
+      However, any value of data_count >= 122 will result in MPI throwing 
+      a segmentation fault on one of its processes (likely due to a memory
+      issue).  This results in numerous different errors which change for
+      different file sizes of data_file and different requested amounts of 
+      values for data_count.
+
+      Errors range as follows:
+
+        Requesting a histogram of data_count = (122 <= 2090) will result in 
+        MPI throwing either an error of "munmap_chunk(): invalid pointer",
+        "free(): invalid size", or "double free or corruption (out)" and the
+        segmentation fault message WHILE STILL PRODUCING THE HISTOGRAM TABLE 
+        (tested with a data_file of 1000 numbers).
+
+        Data_file sizes above 10000 cause ONLY the segmentation fault to output
+        if the requested value of data_count is > 2090.
+
+        This unexpected behavior has been documented to the best of my ability,
+        but other errors may occur when data_count and data_file are in the 
+        thousands.
+      
